@@ -1,0 +1,18 @@
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+tqdm
+pyarrow
+scipy
+lightgbm
+xgboost
+catboost
+# Install torch separately (CPU or CUDA build):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+# torch
+fpdf2
+python-docx
+tabulate
