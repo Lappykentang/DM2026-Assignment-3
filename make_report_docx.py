@@ -27,7 +27,7 @@ from config import CACHE_DIR, FIG_DIR, OUT_DIR
 
 
 # ====================== FILL THESE IN ======================
-STUDENT_ID       = "114XXXXXX"                       # <-- your student ID
+STUDENT_ID       = "314540061"                       # <-- your student ID
 GITHUB_URL       = "https://github.com/Lappykentang/DM2026-Assignment-3"  # public repo
 KAGGLE_PUBLIC_F1 = 0.8267                            # <-- final public macro-F1
 KAGGLE_RANK      = None                               # e.g. "3 / 180" or None
@@ -451,7 +451,7 @@ def main():
             ["e3", "Enriched CNN added as a 7th model (also tried replacing the CNN)",
              "failed, reverted", "0.8187 / 0.8091"],
             ["e4", "Stronger ROCKET (6000 kernels) swapped in / added",
-             "failed, reverted", "(fill in)"],
+             "failed, reverted", "no improvement"],
             ["e5", "Pushed the class-2 offset higher (+0.05 / +0.10)",
              "failed", "0.8181 / 0.8143"],
             ["e6", "Matched predicted class balance to the training priors",
