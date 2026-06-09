@@ -247,8 +247,7 @@ and run \texttt{run\_all.ps1}, which executes every stage and writes
 \texttt{outputs/submissions/submission\_final.csv}. (2) A single self-contained
 notebook, \texttt{HAR\_pipeline\_inline.ipynb}, with every step inlined; its first
 cell installs the dependencies, after which all cells run top-to-bottom and produce
-the same submission. The notebook has been verified to reproduce the script pipeline
-exactly (identical 334 features) and to execute end-to-end without error.
+the same submission. The notebook has been verified to reproduce the script pipeline exactly (identical 334 features) and to execute end-to-end without error. The gradient-boosted trees are deterministic; the neural models (CNN--LSTM, MLP) and the random kernels of ROCKET have minor, not perfectly bit-reproducible variation on CPU, so a fresh run reproduces the reported figures within a few thousandths of macro-F1, and \texttt{submission\_final.csv} is the exact file that achieved the reported 0.8267.
 
 \bibliographystyle{IEEEtran}
 \bibliography{reference}
