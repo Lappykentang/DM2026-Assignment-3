@@ -474,14 +474,46 @@ def main():
     # ============ 6. SUMMARY ============ #
     doc.add_heading("6. Summary", level=1)
     passed = "clears" if KAGGLE_PUBLIC_F1 > BASELINE3 else "does not clear"
-    _p(doc, f"My final submission is a six-model ensemble — LightGBM, XGBoost, CatBoost and an "
-            f"MLP on 334 hand-crafted features, plus a CNN-LSTM and a ROCKET model on the raw "
-            f"signal — combined with a hill-climbing weighted blend and a per-class offset "
-            f"correction. It scores {f_ens:.4f} in GroupKFold(user) cross-validation and "
-            f"{KAGGLE_PUBLIC_F1:.4f} on the public leaderboard, which comfortably {passed} the "
-            f"Baseline-3 target of {BASELINE3:.4f}. Everything is seeded and reproducible from "
-            f"either run_all.ps1 or the inline notebook, and the file it produces "
-            f"(submission_final.csv) is the one I submitted.")
+    _p(doc, f"My final submission is a six-model ensemble — LightGBM [3], XGBoost [2], "
+            f"CatBoost [4] and an MLP on 334 hand-crafted features, plus a CNN-LSTM [8], [9] "
+            f"and a ROCKET [5] model on the raw signal — combined with a hill-climbing weighted "
+            f"blend [7] and a per-class offset correction. The implementation uses "
+            f"scikit-learn [6], and the dataset is the wrist-accelerometer ADL dataset of "
+            f"Bruno et al. [1]. The system scores {f_ens:.4f} in GroupKFold(user) "
+            f"cross-validation and {KAGGLE_PUBLIC_F1:.4f} on the public leaderboard, which "
+            f"comfortably {passed} the Baseline-3 target of {BASELINE3:.4f}. Everything is "
+            f"seeded and reproducible from either run_all.ps1 or the inline notebook, and the "
+            f"file it produces (submission_final.csv) is the one I submitted.")
+
+    # ============ References ============ #
+    doc.add_heading("References", level=1)
+    refs = [
+        "[1] B. Bruno, F. Mastrogiovanni, and A. Sgorbissa, “A public domain dataset for "
+        "ADL recognition using wrist-placed accelerometers,” in Proc. 23rd IEEE Int. Symp. "
+        "Robot and Human Interactive Communication (RO-MAN), 2014, pp. 738–743.",
+        "[2] T. Chen and C. Guestrin, “XGBoost: A scalable tree boosting system,” in "
+        "Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining, 2016, "
+        "pp. 785–794.",
+        "[3] G. Ke et al., “LightGBM: A highly efficient gradient boosting decision tree,” "
+        "in Advances in Neural Information Processing Systems (NeurIPS), vol. 30, 2017.",
+        "[4] L. Prokhorenkova et al., “CatBoost: unbiased boosting with categorical "
+        "features,” in Advances in Neural Information Processing Systems (NeurIPS), vol. 31, "
+        "2018.",
+        "[5] A. Dempster, F. Petitjean, and G. I. Webb, “ROCKET: exceptionally fast and "
+        "accurate time series classification using random convolutional kernels,” Data "
+        "Mining and Knowledge Discovery, vol. 34, no. 5, pp. 1454–1495, 2020.",
+        "[6] F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” Journal of "
+        "Machine Learning Research, vol. 12, pp. 2825–2830, 2011.",
+        "[7] R. Caruana, A. Niculescu-Mizil, G. Crew, and A. Ksikes, “Ensemble selection "
+        "from libraries of models,” in Proc. 21st Int. Conf. Machine Learning (ICML), 2004.",
+        "[8] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” Neural "
+        "Computation, vol. 9, no. 8, pp. 1735–1780, 1997.",
+        "[9] F. J. Ordóñez and D. Roggen, “Deep convolutional and LSTM recurrent neural "
+        "networks for multimodal wearable activity recognition,” Sensors, vol. 16, no. 1, "
+        "p. 115, 2016.",
+    ]
+    for r in refs:
+        p = doc.add_paragraph(r); p.runs[0].font.size = Pt(9.5)
 
     out = REPORT_DIR / f"DM_asg3_{STUDENT_ID}.docx"
     doc.save(str(out))
