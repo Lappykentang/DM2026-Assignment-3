@@ -316,9 +316,11 @@ def main():
     counts = np.bincount(tr_y, minlength=N_CLASSES).astype(float)
     inv = 1.0 / np.clip(counts, 1, None)
     class_weights = (inv / inv.mean()).astype(np.float32)
-    # Boost rare classes - class 2 is the worst (F1 ~0.30), so boost it more.
-    # Tried boosting 2/4/5 all at once - that hurt classes 4 and 5 which were
-    # already decent. Now just boost class 2 strongly.
+    # OPTIONAL extra boosting of the rare classes, only active if you pass
+    # --boost-rare > 1.0. The FINAL submitted model does NOT use this (default
+    # boost_rare=1.0, so the block below is skipped and the CNN trains with
+    # plain class-balanced cross-entropy). I experimented with boosting class 2
+    # extra, but it did not help the ensemble, so it stays off by default.
     if args.boost_rare != 1.0:
         class_weights[2] *= args.boost_rare
         # 4 and 5 get only half the boost

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAR Assignment 3 — Project Overview</title>
+<style>
+  :root{
+    --bg:#0f1420; --card:#161d2e; --line:#26314a; --txt:#e7ecf5; --mut:#9aa7c0;
+    --accent:#5b9cff; --green:#2ecf86; --yellow:#f3c14b; --red:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 64px}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:18px;margin:34px 0 10px;border-left:4px solid var(--accent);padding-left:10px}
+  .sub{color:var(--mut);margin:0 0 18px}
+  .banner{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0}
+  .banner b{color:var(--green)}
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 6px;color:var(--mut);font-size:13px}
+  .flow span{background:#1c2740;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--txt)}
+  .flow .arr{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+        border-radius:10px;overflow:hidden;margin:6px 0 4px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#1b2336;color:#cdd8ef;font-weight:600;font-size:13px;letter-spacing:.02em}
+  tr:last-child td{border-bottom:none}
+  td.file{font-family:Consolas,monospace;color:#bfe0ff;white-space:nowrap}
+  .badge{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap}
+  .b-read{background:rgba(255,107,107,.15);color:var(--red);border:1px solid rgba(255,107,107,.4)}
+  .b-skim{background:rgba(243,193,75,.13);color:var(--yellow);border:1px solid rgba(243,193,75,.4)}
+  .b-safe{background:rgba(46,207,134,.13);color:var(--green);border:1px solid rgba(46,207,134,.4)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 2px;font-size:13px;color:var(--mut)}
+  .note{color:var(--mut);font-size:13px;margin:6px 2px 0}
+  code{background:#1c2740;padding:1px 5px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Human Activity Recognition — Assignment 3</h1>
+  <p class="sub">Project file overview &middot; what each file is and how it contributes to the result</p>
+
+  <div class="banner">
+    <b>Final result: 0.8267 public macro-F1</b> (Baseline-3 to beat was 0.7088).<br>
+    A 6-model ensemble: LightGBM + XGBoost + CatBoost + MLP on 334 hand-crafted features,
+    plus a CNN-LSTM and a ROCKET model on the raw 6&times;300 signal, combined with a
+    hill-climbing weighted blend and a per-class offset correction.
+  </div>
+
+  <h2>Pipeline order</h2>
+  <div class="flow">
+    <span>data_loader</span><span class="arr">&rarr;</span>
+    <span>eda</span><span class="arr">&rarr;</span>
+    <span>naive_baseline</span><span class="arr">&rarr;</span>
+    <span>feature_engineering</span><span class="arr">&rarr;</span>
+    <span>train_lgbm / xgb / catboost / mlp</span><span class="arr">&rarr;</span>
+    <span>train_cnn</span><span class="arr">&rarr;</span>
+    <span>train_rocket</span><span class="arr">&rarr;</span>
+    <span>ensemble</span><span class="arr">&rarr;</span>
+    <span>make_report_assets / docx</span>
+  </div>
+  <p class="note">One command runs all of it: <code>.\run_all.ps1</code>. Or open
+     <code>HAR_pipeline_inline.ipynb</code> and run top-to-bottom.</p>
+
+  <h2>How to read the "review" column</h2>
+  <div class="legend">
+    <span><span class="badge b-read">READ</span> grader-facing prose — read it for accuracy</span>
+    <span><span class="badge b-skim">SKIM</span> code with dev-note comments — glance over the claims</span>
+    <span><span class="badge b-safe">SAFE</span> pure mechanical code — no claims to verify</span>
+  </div>
+
+  <h2>1. Setup &amp; data</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution to the result</th><th>Review</th></tr>
+    <tr><td class="file">config.py</td><td>Shared paths and constants (dataset path, <code>SEED=42</code>, class count, sequence length).</td><td>Central config; the fixed seed is what makes every result reproducible.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">data_loader.py</td><td>Reads the raw train/test CSVs and caches them as parquet.</td><td>Data ingestion for every downstream step.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">eda.py</td><td>Exploratory figures (label balance, example signals, per-user counts).</td><td>Informed the design choices in Q1 (group-by-user CV, class imbalance).</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">naive_baseline.py</td><td>12-feature LogReg / RandomForest baseline.</td><td>The reference score (0.628) every later gain is measured against.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+  </table>
+
+  <h2>2. Feature engineering</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution to the result</th><th>Review</th></tr>
+    <tr><td class="file">feature_engineering.py</td><td>Builds the 334 per-file features in 17 named groups.</td><td><b>The core of the solution.</b> Takes the trees from ~0.63 to ~0.73; the std-channel cadence features here are what drove the jump to 0.8267.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+  </table>
+  <p class="note">SKIM: the header comment summarises which feature ideas worked and which (gravity, wavelet) were tried and dropped — all verified against the leaderboard.</p>
+
+  <h2>3. Base models</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution (OOF macro-F1)</th><th>Review</th></tr>
+    <tr><td class="file">train_lgbm.py</td><td>LightGBM, 3-seed bagged, + the leave-one-group-out feature ablation.</td><td>Base model (~0.715) and the ablation table used in the report.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+    <tr><td class="file">train_xgb.py</td><td>XGBoost, 3-seed bagged.</td><td>Base model (~0.726); a 2nd boosted-tree for diversity.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+    <tr><td class="file">train_catboost.py</td><td>CatBoost (oblivious trees).</td><td>Base model (~0.727); different split mechanics add diversity.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+    <tr><td class="file">train_mlp.py</td><td>3-layer MLP on the 334 features, 3-seed bagged.</td><td>Base model (~0.713); smooth neural errors, different from trees.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+    <tr><td class="file">cnn_dataset.py</td><td>PyTorch Dataset + train-time augmentation for the CNN.</td><td>Feeds the raw 6&times;300 signal (and TTA) to the CNN.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">cnn_model.py</td><td>The CNN-LSTM network definition.</td><td>Architecture of the sequence model.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">train_cnn.py</td><td>Trains the CNN-LSTM on the raw signal with test-time augmentation.</td><td>The key <i>diverse</i> raw-signal model (~0.634 alone, but ~20% of the blend weight).</td><td><span class="badge b-skim">SKIM</span></td></tr>
+    <tr><td class="file">train_rocket.py</td><td>ROCKET: thousands of random convolution kernels on the raw signal.</td><td>Diverse raw-signal model (~0.667); broke the tree-saturation plateau.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+  </table>
+  <p class="note">SKIM note for <code>train_cnn.py</code>: it has optional <code>--focal-loss</code> / <code>--boost-rare</code> flags
+     that are <b>off by default</b> — the final model uses plain class-balanced cross-entropy (this is stated in the code comment).</p>
+
+  <h2>4. Ensemble (the combiner)</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution to the result</th><th>Review</th></tr>
+    <tr><td class="file">ensemble.py</td><td>Loads all six models, builds a hill-climbing weighted blend (and an LR stacker), then applies CV-folded per-class offset tuning.</td><td><b>Produces <code>submission_final.csv</code> (0.8267).</b> The per-class tuning alone is worth about +0.016 on the leaderboard.</td><td><span class="badge b-skim">SKIM</span></td></tr>
+  </table>
+
+  <h2>5. Report &amp; notebook (graded deliverables)</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution to the result</th><th>Review</th></tr>
+    <tr><td class="file">make_report_docx.py</td><td>Generates the Word report; pulls every number live from the cached results so it stays consistent with the code.</td><td>Produces <code>DM_asg3_314540061.docx</code> &rarr; export to PDF for E3 (40% of the grade).</td><td><span class="badge b-read">READ</span></td></tr>
+    <tr><td class="file">make_report_assets.py</td><td>Builds the confusion matrices and per-class F1 chart.</td><td>The figures embedded in the report.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">make_notebook_inline.py</td><td>Generates the self-contained notebook (all code inlined).</td><td>Produces the notebook below.</td><td><span class="badge b-read">READ</span></td></tr>
+    <tr><td class="file">HAR_pipeline_inline.ipynb</td><td>One self-contained notebook with every step inlined — what the TA runs.</td><td>Verified to reproduce the .py pipeline <b>exactly</b> (334 features, 0 difference) &rarr; same 0.8267.</td><td><span class="badge b-read">READ</span></td></tr>
+  </table>
+  <p class="note">READ: these contain the prose / markdown a grader actually reads. The report PDF and the notebook's
+     markdown cells are the two things most worth reading end-to-end for accuracy.</p>
+
+  <h2>6. Project glue &amp; docs</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th><th>Contribution to the result</th><th>Review</th></tr>
+    <tr><td class="file">run_all.ps1</td><td>Runs the whole pipeline end-to-end in order.</td><td>One-command reproduction of everything.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">requirements.txt</td><td>Python package list.</td><td>Environment setup.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">FILES.md</td><td>Plain-text version of this overview.</td><td>Repo documentation.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+    <tr><td class="file">.gitignore</td><td>Excludes the dataset, large caches, venv, and the report folder.</td><td>Keeps the repo clean and within size limits.</td><td><span class="badge b-safe">SAFE</span></td></tr>
+  </table>
+
+  <h2>Bottom line for your hallucination check</h2>
+  <div class="banner">
+    The actual <b>numbers</b> (0.8267, per-model scores, the ablation table) are computed live from the data,
+    so they can't drift. The only place a wrong <i>claim</i> could hide is prose. In priority order, read:
+    <br>1. <b>The report PDF</b> (<code>DM_asg3_314540061.pdf</code>) — verified, but read it once yourself.
+    <br>2. <b>The notebook's markdown cells</b> (<code>HAR_pipeline_inline.ipynb</code>) — the TA reads these.
+    <br>3. The <span class="badge b-skim">SKIM</span> code headers — short dev-note comments; all checked against the leaderboard.
+    <br>Everything marked <span class="badge b-safe">SAFE</span> is mechanical code with no claims to verify.
+  </div>
+
+</div>
+</body>
+</html>
