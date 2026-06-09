@@ -1671,10 +1671,10 @@ md("""## 9. Final PDF report (Prompt 6)
 Kaggle public F1 (after you upload `submission_final.csv`).""")
 
 code(r"""# ============== EDIT THIS BLOCK ==============
-STUDENT_ID       = "114XXXXXX"                       # ← your student ID
-GITHUB_URL       = "https://github.com/YOU/REPO"     # ← your repo URL
-KAGGLE_PUBLIC_F1 = None                              # ← e.g. 0.7421
-KAGGLE_RANK      = None                              # ← optional, e.g. "23/180"
+STUDENT_ID       = "314540061"                       # your student ID
+GITHUB_URL       = "https://github.com/Lappykentang/DM2026-Assignment-3"  # your repo
+KAGGLE_PUBLIC_F1 = 0.8267                             # final public macro-F1
+KAGGLE_RANK      = None                              # optional, e.g. "3/180"
 NAIVE_CV_F1      = max(f1_lr, f1_rf)                 # auto-filled from cell above
 # =============================================
 print("STUDENT_ID  :", STUDENT_ID)
